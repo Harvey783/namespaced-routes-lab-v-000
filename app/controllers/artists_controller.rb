@@ -1,8 +1,6 @@
 class ArtistsController < ApplicationController
   def index
-    preference = Preference.first_or_create(artist_sort_order: "ASC")
-    preference.artist_sort_order = "ASC" if preference.artist_sort_order.blank?
-    @artists = Artist.all.order(name: preference.artist_sort_order)
+    @artists = Artist.all
   end
 
   def show
@@ -10,12 +8,10 @@ class ArtistsController < ApplicationController
   end
 
   def new
-    preference = Preference.first
-
-    if preference && preference.allow_create_artists
+    if Preference.last.allow_create_artists
       @artist = Artist.new
     else
-      redirect_to artists_path, alert: "Your current settings do not allow new artists to be created"
+      redirect_to artists_path
     end
   end
 
